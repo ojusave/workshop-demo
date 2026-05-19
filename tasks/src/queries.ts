@@ -1,8 +1,9 @@
-export function buildQueries(ticker: string): string[] {
+export function buildQueries(query: string): string[] {
+  const q = query.trim()
   return [
-    `${ticker} current stock price market cap PE ratio 52 week range`,
-    `${ticker} analyst price targets ratings consensus`,
-    `${ticker} recent news earnings results product launches`,
-    `${ticker} risks bear case competitive position peers`,
+    `${q} overview key facts`,
+    `${q} recent news and developments`,
+    `${q} expert analysis and commentary`,
+    `${q} risks challenges and counterarguments`,
   ]
 }

@@ -13,11 +13,16 @@ app.use(express.json())
 app.get('/healthz', (_req, res) => res.send('ok'))
 
 app.post('/api/research', (req, res) => {
-  const ticker = (req.body?.ticker ?? '').toUpperCase()
-  if (!/^[A-Z]{1,10}$/.test(ticker)) {
-    return res.status(400).json({ error: 'Enter a valid ticker (1 to 10 letters)' })
+  const query =
+    typeof req.body?.query === 'string'
+      ? req.body.query.trim()
+      : typeof req.body?.ticker === 'string'
+        ? req.body.ticker.trim()
+        : ''
+  if (!query) {
+    return res.status(400).json({ error: 'Enter a research query' })
   }
-  const runId = startResearch(ticker)
+  const runId = startResearch(query)
   res.json({ runId })
 })
 

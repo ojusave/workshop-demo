@@ -4,7 +4,7 @@ import type { SearchResult } from '../../shared/types.js'
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
 export async function synthesize(
-  ticker: string,
+  query: string,
   results: SearchResult[]
 ): Promise<string> {
   const sources = results
@@ -12,11 +12,13 @@ export async function synthesize(
     .map((a, i) => `[${i + 1}] ${a.title}\n${a.url}\n${a.text}`)
     .join('\n\n---\n\n')
 
-  const prompt = `Write a research memo on ${ticker} for an individual investor.
+  const prompt = `Write a research memo on the following topic for an individual investor.
+
+Topic: ${query}
 
 Use this exact markdown structure:
 
-# ${ticker} Research Memo
+# Research Memo
 
 ## Snapshot
 Extract these from the sources. If a value is not in the sources, write "N/A". Do not invent numbers.

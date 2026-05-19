@@ -10,7 +10,7 @@ type LiveRun = {
 
 const liveRuns = new Map<string, LiveRun>()
 
-export function startResearch(ticker: string): string {
+export function startResearch(query: string): string {
   const runId = randomUUID()
   const live: LiveRun = { events: [], listeners: new Set(), done: false }
   liveRuns.set(runId, live)
@@ -21,7 +21,7 @@ export function startResearch(ticker: string): string {
     if (e.type === 'done' || e.type === 'failed') live.done = true
   }
 
-  research(ticker, onEvent).catch((err) => {
+  research(query, onEvent).catch((err) => {
     onEvent({ type: 'failed', error: String(err) })
   })
 

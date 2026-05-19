@@ -4,17 +4,17 @@ import { synthesize } from './synthesize.js'
 import type { ResearchEvent } from '../../shared/types.js'
 
 export async function research(
-  ticker: string,
+  query: string,
   onEvent: (e: ResearchEvent) => void
 ): Promise<string> {
-  const queries = buildQueries(ticker)
-  onEvent({ type: 'started', ticker, queries })
+  const searches = buildQueries(query)
+  onEvent({ type: 'started', query, queries: searches })
 
   const results = await Promise.all(
-    queries.map(async (query, index) => {
+    searches.map(async (searchQuery, index) => {
       onEvent({ type: 'search:running', index })
       try {
-        const result = await searchOne(ticker, query, index)
+        const result = await searchOne(query, searchQuery, index)
         onEvent({ type: 'search:done', index, articleCount: result.articles.length })
         return result
       } catch (err) {
@@ -25,7 +25,7 @@ export async function research(
   )
 
   onEvent({ type: 'synthesizing' })
-  const memo = await synthesize(ticker, results)
+  const memo = await synthesize(query, results)
   onEvent({ type: 'done', memo })
   return memo
 }

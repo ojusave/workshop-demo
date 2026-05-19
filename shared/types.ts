@@ -12,7 +12,7 @@ export type SearchResult = {
 }
 
 export type ResearchEvent =
-  | { type: 'started'; ticker: string; queries: string[] }
+  | { type: 'started'; query: string; queries: string[] }
   | { type: 'search:running'; index: number }
   | { type: 'search:done'; index: number; articleCount: number }
   | { type: 'search:failed'; index: number; error: string }

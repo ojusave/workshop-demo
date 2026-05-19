@@ -18,7 +18,7 @@ function maybeFail(query: string) {
 }
 
 export async function searchOne(
-  ticker: string,
+  _topic: string,
   query: string,
   index: number
 ): Promise<SearchResult> {

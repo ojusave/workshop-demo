@@ -36,7 +36,7 @@ const initialState: AppState = {
 
 type ResearchEvent = {
   type: string
-  ticker?: string
+  query?: string
   queries?: string[]
   index?: number
   articleCount?: number
@@ -102,7 +102,7 @@ function computeProgress(state: AppState): {
 }
 
 export default function App() {
-  const [ticker, setTicker] = useState('')
+  const [query, setQuery] = useState('')
   const [validationError, setValidationError] = useState<string | null>(null)
   const [state, setState] = useState<AppState>(initialState)
 
@@ -177,9 +177,9 @@ export default function App() {
   const progress = computeProgress(state)
 
   async function startResearch() {
-    const symbol = ticker.toUpperCase()
-    if (!/^[A-Z]{1,10}$/.test(symbol)) {
-      setValidationError('Enter a valid ticker (1 to 10 letters)')
+    const text = query.trim()
+    if (!text) {
+      setValidationError('Enter a research query')
       return
     }
     setValidationError(null)
@@ -192,7 +192,7 @@ export default function App() {
     const res = await fetch('/api/research', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ticker: symbol }),
+      body: JSON.stringify({ query: text }),
     })
     if (!res.ok) {
       const body = (await res.json()) as { error?: string }
@@ -227,15 +227,12 @@ export default function App() {
       <main className="mx-auto max-w-[960px] px-6 py-8">
         <section className="mb-8">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
-            <input
-              type="text"
-              value={ticker}
-              onChange={(e) => {
-                const v = e.target.value.replace(/[^a-zA-Z]/g, '').slice(0, 10)
-                setTicker(v.toUpperCase())
-              }}
-              placeholder="AAPL"
-              className="h-14 w-full flex-1 border border-white/10 bg-[#171717] px-4 font-mono text-2xl uppercase text-white outline-none focus:border-violet-500"
+            <textarea
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="AAPL, or any question: impact of datacenter buildout on utility stocks"
+              rows={2}
+              className="min-h-14 w-full flex-1 resize-y border border-white/10 bg-[#171717] px-4 py-3 text-lg text-white outline-none focus:border-violet-500"
               disabled={runActive}
             />
             <button
@@ -252,7 +249,7 @@ export default function App() {
           )}
           {!showPipeline && (
             <p className="mt-3 text-sm text-white/50">
-              Parallel Exa searches, then a Claude memo. Most v1 runs fail on purpose.
+              Four parallel Exa searches, then a Claude memo. Tickers and open questions both work.
             </p>
           )}
         </section>
